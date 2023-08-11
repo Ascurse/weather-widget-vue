@@ -1,0 +1,30 @@
+@font-face {
+  font-family: "SF-Pro-Display";
+  src: local("SF-Pro-Display"),
+   url(../../fonts/SF-PRO/SFPRODISPLAYREGULAR.OTF);
+   font-display: swap;
+   font-style: normal;
+   font-weight: 400;
+}
+
+@font-face {
+  font-family: "SF-Pro-Display";
+  src: local("SF-Pro-Display"),
+   url(../../fonts/SF-PRO/SFPRODISPLAYMEDIUM.OTF);
+   font-display: swap;
+   font-style: normal;
+   font-weight: 500;
+}
+
+@font-face {
+  font-family: "SF-Pro-Display";
+  src: local("SF-Pro-Display"),
+   url(../../fonts/SF-PRO/SFPRODISPLAYBOLD.OTF);
+   font-display: swap;
+   font-style: normal;
+   font-weight: 700;
+}
+
+$temperature: 700 40px 'SF-Pro-Display';
+$title-16: 700 16px 'SF-Pro-Display';
+$caption-14: 400 14px 'SF-Pro-Display';
