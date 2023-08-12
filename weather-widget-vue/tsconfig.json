@@ -12,6 +12,7 @@
     }
   ],
   "compilerOptions": {
+    "noEmit": true,
     "allowImportingTsExtensions": true,
   }
 }

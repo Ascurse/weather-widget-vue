@@ -7,7 +7,7 @@ export function calculateDewPoint(temperature: number, humidity: number): number
 }
 
 export function getWindDirection(deg: number) {
-    const directions = ["North", "Northeast", "East", "Southeast", "South", "Southwest", "West", "Northwest"];
+    const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
 
     const index = Math.round(deg / 45) % 8;
     return directions[index];

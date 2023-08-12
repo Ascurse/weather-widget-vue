@@ -14,3 +14,13 @@ export async function getWeather(lat: number, lon: number) {
         console.log('Error: ', err)
     }
 }
+
+export async function getCityName(cityName: string) {
+    try {
+        const url = `http://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=5&appid=${apiKey}`
+        const response = await axios.get(url)
+        return response.data
+    } catch (err) {
+        console.log('Error: ', err)
+    }
+}

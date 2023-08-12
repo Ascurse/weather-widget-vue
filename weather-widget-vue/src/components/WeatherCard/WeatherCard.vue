@@ -5,15 +5,15 @@
       <img src="../icons/Weather/sun.png" class="weather-card__image" />
       <span class="weather-card__temperature">{{ temperature }}</span>
     </div>
-    <div class="weather-card__desc">{{description}}</div>
+    <div class="weather-card__desc">{{ description }}</div>
     <div class="weather-card__additional">
       <div class="weather-card__info-container">
         <div class="weather-card__item-container">
-          <img src="../icons/Wind/Wind-SW.png" class="weather-card__icon" />
-          <span class="weather-card__wind-info">3.0 m/s N</span>
+          <img :src="windDirectionIconUrl" class="weather-card__icon" />
+          <span class="weather-card__wind-info">{{ windInfo }}</span>
         </div>
         <div class="weather-card__info-item">Humidity: {{ weather?.humidity }}%</div>
-        <div v-if="visibility" class="weather-card__info-item">Visibility: {{ visibility }}</div>
+        <div class="weather-card__info-item">Visibility: {{ visibility }}</div>
       </div>
       <div class="weather-card__info-container">
         <div class="weather-card__item-container">
@@ -29,55 +29,83 @@
 <script setup lang="ts">
 import type { ClientWeatherData } from '@/types/clientNamespace'
 import { getWeather } from '../../api/requests.ts'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, type PropType } from 'vue'
 import {
   capitalizeFirstLetter,
   ensureSentenceEndsWithDot,
+  getWindDirection,
   metersToKilometers
 } from '@/helpers/calculations'
+import WindNorthIcon from '../icons/Wind/Wind-N.png'
+import WindNorthEastIcon from '../icons/Wind/Wind-NE.png'
+import WindNorthWestIcon from '../icons/Wind/Wind-NW.png'
+import WindWestIcon from '../icons/Wind/Wind-W.png'
+import WindSouthIcon from '../icons/Wind/Wind-S.png'
+import WindSouthEastIcon from '../icons/Wind/Wind-SE.png'
+import WindSouthWestIcon from '../icons/Wind/Wind-SW.png'
+import WindEastIcon from '../icons/Wind/Wind-E.png'
+
+// Props
+const props = defineProps({
+    city: {
+    type: Object as PropType<{ name: string; lat: number; lon: number }>,
+    required: true,
+  },
+})
+
+// Weather data
 const weather = ref<ClientWeatherData | undefined>(undefined)
 onMounted(async () => {
-  await getWeather(50, 45).then((data) => (weather.value = data))
+  await getWeather(props.city.lat, props.city.lon).then((data) => (weather.value = data))
   console.log(weather.value)
 })
-const visibility = computed(() => {
-  if (weather.value) {
-    return metersToKilometers(weather.value.visibility)
-  }
-  return ''
-})
-const hPa = computed(() => {
-  if (weather.value) {
-    return `${weather.value.pressure}hPa`
-  }
-  return ''
-})
-const title = computed(() => {
-  if (weather.value) {
-    return `${weather.value.name},${weather.value.country}`
-  }
-  return ''
-})
-const temperature = computed(() => {
-  if (weather.value) {
-    return `${weather.value.temp.toFixed(0)}°C`
-  }
-  return ''
-})
+
+// Computed properties
+const visibility = computed(() =>
+  weather.value ? metersToKilometers(weather.value.visibility) : ''
+)
+const hPa = computed(() => (weather.value ? `${weather.value.pressure}hPa` : ''))
+const title = computed(() =>
+  weather.value ? `${weather.value.name},${weather.value.country}` : ''
+)
+const temperature = computed(() => (weather.value ? `${weather.value.temp.toFixed(0)}°C` : ''))
 const description = computed(() => {
   if (weather.value) {
     const processedDescriptions: string[] = weather.value.description.map((description) => {
       const sentences: string[] = description.split('.')
-
       const processedSentences: string[] = sentences
         .filter((sentence) => sentence.trim() !== '')
         .map((sentence) => ensureSentenceEndsWithDot(capitalizeFirstLetter(sentence)))
-
       return processedSentences.join(' ')
     })
     return `Feels like ${weather.value.feelsLike.toFixed(0)}°C. ${processedDescriptions}`
   }
   return ''
+})
+const windInfo = computed(() =>
+  weather.value ? `${weather.value.windSpeed} m/s ${windDirection.value}` : ''
+)
+
+// Wind direction and icon mapping
+const windDirection = computed(() => (weather.value ? getWindDirection(weather.value.windDeg) : ''))
+
+type WindDirectionIconMap = {
+  [key: string]: string
+}
+const windDirectionIconMap: WindDirectionIconMap = {
+  N: WindNorthIcon,
+  NE: WindNorthEastIcon,
+  NW: WindNorthWestIcon,
+  W: WindWestIcon,
+  SW: WindSouthWestIcon,
+  S: WindSouthIcon,
+  SE: WindSouthEastIcon,
+  E: WindEastIcon
+}
+
+const windDirectionIconUrl = computed(() => {
+  const iconUrl = windDirectionIconMap[windDirection.value]
+  return iconUrl || undefined
 })
 </script>
 

@@ -42,3 +42,11 @@ export interface ServerWeatherData {
         speed: number;
     };
 }
+
+export interface CityResult {
+    country: string;
+    lat: number;
+    lon: number;
+    name: string;
+    state: string;
+}
