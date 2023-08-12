@@ -12,3 +12,10 @@ export interface ClientWeatherData {
     windDeg: number;
     windSpeed: number;
 }
+
+export interface City {
+    country: string;
+    lat: number;
+    lon: number;
+    name: string;
+}

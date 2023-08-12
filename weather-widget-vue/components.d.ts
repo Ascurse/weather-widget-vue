@@ -11,5 +11,6 @@ declare module 'vue' {
     SearchPlace: typeof import('./src/components/SearchPlace/SearchPlace.vue')['default']
     WeatherCard: typeof import('./src/components/WeatherCard/WeatherCard.vue')['default']
     WeatherSettings: typeof import('./src/components/Settings/WeatherSettings.vue')['default']
+    WeatherWidget: typeof import('./src/components/WeatherWidget/WeatherWidget.vue')['default']
   }
 }

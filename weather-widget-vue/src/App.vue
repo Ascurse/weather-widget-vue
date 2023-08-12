@@ -1,11 +1,12 @@
 <template>
   <div>
-    <SearchPlaceVue />
+    <WeatherSettingsVue />
   </div>
 </template>
 
 <script setup lang="ts">
 import SearchPlaceVue from './components/SearchPlace/SearchPlace.vue';
+import WeatherSettingsVue from './components/Settings/WeatherSettings.vue';
 import WeatherCard from './components/WeatherCard/WeatherCard.vue';
 
 </script>

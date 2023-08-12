@@ -1,12 +1,11 @@
 <template>
   <div class="search-place">
-    <div>Hello!</div>
     <a-select
       v-model:value="value"
       show-search
       placeholder="Input city name"
       style="width: 100%"
-      :default-active-first-option="false"
+      :default-active-first-option="true"
       :show-arrow="false"
       :filter-option="false"
       :not-found-content="null"
@@ -26,13 +25,7 @@ import { ref } from 'vue';
 import { getCityName } from '@/api/requests';
 import debounce from 'lodash/debounce';
 import type { CityResult } from '@/types/apiNamespace';
-
-interface City {
-  country: string;
-  lat: number;
-  lon: number;
-  name: string;
-}
+import type { City } from '@/types/clientNamespace';
 
 const value = ref('');
 const data = ref<City[]>([]);
@@ -55,8 +48,8 @@ const debouncedHandleSearch = debounce(handleSearch, 300);
 const handleChange = (selectedValue: string) => {
   const selectedOption = data.value.find(option => `${option.name}, ${option.country}` === selectedValue);
   if (selectedOption) {
-    console.log(selectedOption);
-    emit('selected', selectedOption);
+      emit('selected', selectedOption);
+    value.value = ''
   }
 };
 
