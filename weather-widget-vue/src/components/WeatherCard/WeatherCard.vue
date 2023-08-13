@@ -56,10 +56,11 @@ const props = defineProps({
     required: true,
   },
 })
+
+const weather = ref<ClientWeatherData>();
 const isLoading = ref(false)
 
 // Weather data
-const weather = ref<ClientWeatherData | undefined>(undefined)
 onMounted(async () => {
   isLoading.value = true
   await getWeather(props.city.lat, props.city.lon).then((data) => (weather.value = data))

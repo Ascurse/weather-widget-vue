@@ -29,47 +29,27 @@
 <script setup lang="ts">
 import type { City } from '@/types/clientNamespace'
 import SearchPlace from '../SearchPlace/SearchPlace.vue'
-import { onMounted, ref, watch } from 'vue'
-import { useStore } from 'vuex';
-import { getCurrentCity } from '../../helpers/currentLocation'
+import { ref, watch, type PropType } from 'vue'
 
-const store = useStore();
-
-const cities = ref<City[]>([])
-
-onMounted(async () => {
-  const savedCities = localStorage.getItem('cities')
-  if (!savedCities || JSON.parse(savedCities).length < 1) {
-    try {
-      const newCity = await getCurrentCity()
-      cities.value = [newCity]
-    } catch (error) {
-      console.error('Error getting current position or weather:', error)
-    }
-  } else {
-    cities.value = JSON.parse(savedCities)
-  }
-})
-
-watch(
-  cities,
-  (newCities) => {
-    localStorage.setItem('cities', JSON.stringify(newCities))
-    store.commit('setCities', [newCities]);
+const props = defineProps({
+  cities: {
+    type: Array as PropType<City[]>,
+    required: true,
   },
-  { deep: true }
-)
+});
+const emit = defineEmits(['updateCities']);
+const localCities = ref<City[]>(props.cities)
 
 const isDragging = ref(false)
 const draggingIndex = ref(-1)
 
 const handleSelectedOption = (selectedOption: City) => {
-  const isDuplicate = cities.value.some(
+  const isDuplicate = localCities.value.some(
     (city) => city.name === selectedOption.name && city.country === selectedOption.country
   )
   if (!isDuplicate) {
-    cities.value.push(selectedOption)
-    store.commit('setCities', [...store.state.cities, selectedOption]);
+    localCities.value = [...localCities.value, selectedOption];
+    emit('updateCities', localCities.value)
   }
 }
 
@@ -91,8 +71,9 @@ const handleDragOver = (event: DragEvent) => {
 const handleDrop = (event: DragEvent, toIndex: number) => {
   const fromIndex = parseInt(event.dataTransfer!.getData('text/plain'))
   if (fromIndex !== toIndex) {
-    const movedItem = cities.value.splice(fromIndex, 1)[0]
-    cities.value.splice(toIndex, 0, movedItem)
+    const movedItem = localCities.value.splice(fromIndex, 1)[0]
+    localCities.value.splice(toIndex, 0, movedItem)
+    emit('updateCities', localCities.value)
   }
 }
 
@@ -102,14 +83,21 @@ const handleDragEnd = () => {
 }
 
 const handleRemove = (index: number) => {
-  cities.value.splice(index, 1)
-  store.commit('setCities', cities.value);
-  console.log(store.state.cities)
+  localCities.value.splice(index, 1)
+  emit('updateCities', localCities.value)
 }
 
 const getPlaceName = (elem: City) => {
   return `${elem.name}, ${elem.country}`
 }
+
+watch(
+  localCities,
+  (newCities) => {
+    localStorage.setItem('cities', JSON.stringify(newCities))
+  },
+  { deep: true }
+)
 </script>
 
 <style scoped lang="scss">

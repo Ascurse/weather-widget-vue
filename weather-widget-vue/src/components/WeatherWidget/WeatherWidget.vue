@@ -1,9 +1,7 @@
 <template>
   <div class="weather-widget">
-    <WeatherSettings v-if="isSettingsOpen" />
-    <div v-else>
-      <WeatherCard class="weather-widget__card" v-for="city in cities" :key="city.name" :city="city" />
-    </div>
+    <WeatherSettings v-if="isSettingsOpen" @update-cities="updateCities" :cities="cities"/>
+    <WeatherCard v-else class="weather-widget__card" v-for="city in cities" :key="city.name + city.lat" :city="city" />
     <img :src="settingsIcon" class="weather-widget__icon" @click="toggleSettings" />
   </div>
 </template>
@@ -11,27 +9,26 @@
 <script setup lang="ts">
 import WeatherSettings from '../WeatherSettings/WeatherSettings.vue'
 import WeatherCard from '../WeatherCard/WeatherCard.vue'
-import { ref, computed, onMounted, onUpdated } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { getCurrentCity } from '../../helpers/currentLocation'
-import { useStore } from 'vuex'
 import SettingsIcon from '../icons/settings-icon.png'
 import CloseIcon from '../icons/close.png'
+import type { City } from '@/types/clientNamespace'
 
-const store = useStore()
 const isSettingsOpen = ref(false)
-const cities = computed(() => store.state.cities)
+const cities = ref<City[]>([])
 
 const fetchCitiesFromLocalStorage = async () => {
   const savedCities = localStorage.getItem('cities')
   if (!savedCities || JSON.parse(savedCities).length < 1) {
     try {
       const newCity = await getCurrentCity()
-      store.commit('setCities', [newCity])
+      cities.value = [newCity]
     } catch (error) {
       console.error('Error getting current position or weather:', error)
     }
   } else {
-    store.commit('setCities', JSON.parse(savedCities))
+    cities.value = JSON.parse(savedCities)
   }
 }
 
@@ -41,14 +38,15 @@ const settingsIcon = computed(() => {
 
 onMounted(async () => {
   await fetchCitiesFromLocalStorage()
-})
-
-onUpdated(async () => {
-  await fetchCitiesFromLocalStorage()
+  console.log(cities.value)
 })
 
 const toggleSettings = () => {
   isSettingsOpen.value = !isSettingsOpen.value
+}
+
+const updateCities = (newCities: City[]) => {
+  cities.value = newCities
 }
 </script>
 
