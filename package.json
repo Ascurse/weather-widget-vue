@@ -1,7 +1,27 @@
 {
   "name": "weather-widget-vue",
-  "version": "0.0.0",
-  "private": true,
+  "version": "1.0.0",
+  "private": false,
+  "description": "A Vue weather widget component",
+  "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ascurse/weather-widget-vue.git"
+  },
+  "keywords": [
+    "vue",
+    "weather",
+    "widget"
+  ],
+  "author": "Maximilian Shupyro",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Ascurse/weather-widget-vue/issues"
+  },
+  "homepage": "https://github.com/Ascurse/weather-widget-vue#readme",
+  "peerDependencies": {
+    "vue": "^3.0.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check build-only",
