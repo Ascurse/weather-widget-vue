@@ -1,9 +1,20 @@
 {
-  "name": "weather-widget-vue",
-  "version": "1.0.0",
+  "name": "simple-weather-widget-vue",
+  "version": "1.0.7",
   "private": false,
   "description": "A Vue weather widget component",
-  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/simple-weather-widget.umd.ts",
+  "module": "./dist/simple-weather-widget.es.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/simple-weather-widget.es.ts",
+      "require": "./dist/simple-weather-widget.umd.ts"
+    },
+    "./dist/style.css": "./dist/style.css"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Ascurse/weather-widget-vue.git"
@@ -39,7 +50,8 @@
     "axios": "^1.4.0",
     "lodash": "^4.17.21",
     "scss": "^0.2.4",
-    "vue": "^3.3.4"
+    "simple-weather-widget-vue": "^1.0.1",
+    "vue": "^3.0.0"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.3.2",

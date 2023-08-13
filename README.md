@@ -2,6 +2,24 @@
 
 A simple weather widget that allows to watch for weather in multiple locations at once.
 
+## Usage
+```sh
+npm i simple-weather-widget-vue
+```
+```
+import WeatherWidget from 'simple-weather-widget-vue'
+```
+
+also import css file 
+```
+import "simple-weather-widget-vue/dist/style.css"
+```
+
+Connect on page as a component
+```
+<weather-widget />
+```
+
 ## Recommended IDE Setup
 
 [VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).

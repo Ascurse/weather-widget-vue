@@ -103,6 +103,7 @@ watch(
 <style scoped lang="scss">
 @import '../../shared/designSystem/fonts.scss';
 .settings {
+  color: #000;
   &__title {
     font: $title-16;
     margin-bottom: 30px;
@@ -117,6 +118,7 @@ watch(
     flex-wrap: nowrap;
     align-items: center;
     font: $caption-14;
+    color: #000;
     height: 40px;
     border-radius: 10px;
     background-color: lightblue;

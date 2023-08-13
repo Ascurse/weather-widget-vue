@@ -1,5 +1,10 @@
-import { createApp } from 'vue'
-import App from './App.vue'
+import type { App, Plugin } from 'vue';
+import WeatherWidget from './components/WeatherWidget/WeatherWidget.vue';
 
-const app = createApp(App);
-app.mount('#app');
+const weatherWidgetPlugin: Plugin = {
+    install: (app: App, ...options: any[]) => {
+        app.component("WeatherWidget", WeatherWidget);
+    }
+};
+
+export default weatherWidgetPlugin;

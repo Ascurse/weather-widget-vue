@@ -54,6 +54,9 @@ const updateCities = (newCities: City[]) => {
 .weather-widget {
   padding: 10px 35px;
   position: relative;
+  min-height: 308px;
+  min-width: 329px;
+  background-color: #fff;
 
   &__icon {
     width: 25px;
