@@ -1,18 +1,19 @@
 <template>
   <div>
-    <WeatherSettingsVue />
+    <weather-widget />
   </div>
 </template>
 
 <script setup lang="ts">
 import SearchPlaceVue from './components/SearchPlace/SearchPlace.vue';
-import WeatherSettingsVue from './components/Settings/WeatherSettings.vue';
+import WeatherSettingsVue from './components/WeatherSettings/WeatherSettings.vue';
 import WeatherCard from './components/WeatherCard/WeatherCard.vue';
+import WeatherWidget from './components/WeatherWidget/WeatherWidget.vue'
 
 </script>
 
 
-<style scoped>
+<style>
 @import './shared/designSystem/normalize.scss';
 @import './shared/designSystem/fonts.scss';
 

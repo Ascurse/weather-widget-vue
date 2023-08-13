@@ -2,6 +2,7 @@ export interface ClientWeatherData {
     name: string;
     country: string;
     weatherCondition: string;
+    weatherIcon: string;
     feelsLike: number;
     description: string[];
     temp: number;

@@ -7,6 +7,7 @@ export function convertDataFromServer(data: serverTypes.ServerWeatherData): clie
         name: data.name,
         country: data.sys.country,
         weatherCondition: data.weather[0].main,
+        weatherIcon: `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`,
         feelsLike: data.main.feels_like,
         description: data.weather.map((weather) => weather.description),
         temp: data.main.temp,

@@ -10,7 +10,7 @@ declare module 'vue' {
     ASelect: typeof import('ant-design-vue/es')['Select']
     SearchPlace: typeof import('./src/components/SearchPlace/SearchPlace.vue')['default']
     WeatherCard: typeof import('./src/components/WeatherCard/WeatherCard.vue')['default']
-    WeatherSettings: typeof import('./src/components/Settings/WeatherSettings.vue')['default']
+    WeatherSettings: typeof import('./src/components/WeatherSettings/WeatherSettings.vue')['default']
     WeatherWidget: typeof import('./src/components/WeatherWidget/WeatherWidget.vue')['default']
   }
 }

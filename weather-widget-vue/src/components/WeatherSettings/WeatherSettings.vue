@@ -1,7 +1,7 @@
 <template>
   <div class="settings">
     <h2 class="settings__title">Settings</h2>
-    <div class="settings__draggable-area" :list="cities">
+    <div class="settings__draggable-area">
       <TransitionGroup>
         <div
           class="settings__draggable-list"
@@ -9,28 +9,20 @@
           :key="element.name"
         >
           <div
-            class="settings__draggable-item"
-            :class="{ 'settings__draggable-item_dragging': isDragging && index === draggingIndex }"
+            :class="['settings__draggable-item', {'settings__draggable-item_dragging': isDragging && index === draggingIndex }]"
             @dragover="handleDragOver($event)"
             @drop="handleDrop($event, index)"
             @dragend="handleDragEnd"
           >
-            <span
-              class="settings__draggable-icon settings__draggable-drag"
-              @dragstart="handleDragStart($event, index)"
-              draggable="true"
-            />
-            {{ getPlaceName(element)}}
-            <span
-              class="settings__draggable-icon settings__draggable-remove"
-              @click="handleRemove(index)"
-            />
+            <span class="settings__draggable-icon settings__draggable-drag" @dragstart="handleDragStart($event, index)" draggable="true"/>
+            {{ getPlaceName(element) }}
+            <span class="settings__draggable-icon settings__draggable-remove" @click="handleRemove(index)" />
           </div>
         </div>
       </TransitionGroup>
     </div>
     <h3 class="settings__add-location-title">Add location</h3>
-      <SearchPlace @selected="handleSelectedOption" />
+    <SearchPlace @selected="handleSelectedOption" />
   </div>
 </template>
 
@@ -38,44 +30,57 @@
 import type { City } from '@/types/clientNamespace'
 import SearchPlace from '../SearchPlace/SearchPlace.vue'
 import { onMounted, ref, watch } from 'vue'
+import { useStore } from 'vuex';
+import { getCurrentCity } from '../../helpers/currentLocation'
 
-const cities = ref([])
+const store = useStore();
 
-onMounted(() => {
-  const savedCities = localStorage.getItem('cities');
-  if (!savedCities) {
-    
+const cities = ref<City[]>([])
+
+onMounted(async () => {
+  const savedCities = localStorage.getItem('cities')
+  if (!savedCities || JSON.parse(savedCities).length < 1) {
+    try {
+      const newCity = await getCurrentCity()
+      cities.value = [newCity]
+    } catch (error) {
+      console.error('Error getting current position or weather:', error)
+    }
+  } else {
+    cities.value = JSON.parse(savedCities)
   }
-  if (savedCities) {
-    cities.value = JSON.parse(savedCities);
-  }
-});
+})
 
-watch(cities, (newCities) => {
-  localStorage.setItem('cities', JSON.stringify(newCities));
-}, {deep: true});
-
-const handleSelectedOption = (selectedOption: City) => {
-  const isDuplicate = cities.value.some(city => city.name === selectedOption.name && city.country === selectedOption.country);
-  if (!isDuplicate) {
-    cities.value.push(selectedOption);
-  }
-}
+watch(
+  cities,
+  (newCities) => {
+    localStorage.setItem('cities', JSON.stringify(newCities))
+    store.commit('setCities', [newCities]);
+  },
+  { deep: true }
+)
 
 const isDragging = ref(false)
 const draggingIndex = ref(-1)
 
+const handleSelectedOption = (selectedOption: City) => {
+  const isDuplicate = cities.value.some(
+    (city) => city.name === selectedOption.name && city.country === selectedOption.country
+  )
+  if (!isDuplicate) {
+    cities.value.push(selectedOption)
+    store.commit('setCities', [...store.state.cities, selectedOption]);
+  }
+}
+
 const handleDragStart = (event: DragEvent, index: number) => {
-  // Check if the drag started from the draggable-drag icon
-  if (
-    event.target instanceof HTMLElement &&
-    event.target.classList.contains('settings__draggable-drag')
-  ) {
+  const target = event.target as HTMLElement
+  if (target.classList.contains('settings__draggable-drag')) {
     isDragging.value = true
     draggingIndex.value = index
     event.dataTransfer!.setData('text/plain', index.toString())
   } else {
-    event.preventDefault() // Prevent dragging if not from the draggable-drag icon
+    event.preventDefault()
   }
 }
 
@@ -86,7 +91,7 @@ const handleDragOver = (event: DragEvent) => {
 const handleDrop = (event: DragEvent, toIndex: number) => {
   const fromIndex = parseInt(event.dataTransfer!.getData('text/plain'))
   if (fromIndex !== toIndex) {
-    const [movedItem] = cities.value.splice(fromIndex, 1)
+    const movedItem = cities.value.splice(fromIndex, 1)[0]
     cities.value.splice(toIndex, 0, movedItem)
   }
 }
@@ -97,7 +102,9 @@ const handleDragEnd = () => {
 }
 
 const handleRemove = (index: number) => {
-  cities.value.splice(index, 1);
+  cities.value.splice(index, 1)
+  store.commit('setCities', cities.value);
+  console.log(store.state.cities)
 }
 
 const getPlaceName = (elem: City) => {

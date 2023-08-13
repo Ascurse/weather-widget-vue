@@ -1,26 +1,29 @@
 <template>
   <div class="weather-card">
-    <h2 class="weather-card__city">{{ title }}</h2>
-    <div class="weather-card__temp-wrapper">
-      <img src="../icons/Weather/sun.png" class="weather-card__image" />
-      <span class="weather-card__temperature">{{ temperature }}</span>
-    </div>
-    <div class="weather-card__desc">{{ description }}</div>
-    <div class="weather-card__additional">
-      <div class="weather-card__info-container">
-        <div class="weather-card__item-container">
-          <img :src="windDirectionIconUrl" class="weather-card__icon" />
-          <span class="weather-card__wind-info">{{ windInfo }}</span>
-        </div>
-        <div class="weather-card__info-item">Humidity: {{ weather?.humidity }}%</div>
-        <div class="weather-card__info-item">Visibility: {{ visibility }}</div>
+    <spin v-if="isLoading" size="large"/>
+    <div v-else class="weather-card__content">
+      <h2 class="weather-card__city">{{ title }}</h2>
+      <div class="weather-card__temp-wrapper">
+        <img :src="weather?.weatherIcon" class="weather-card__image" />
+        <span class="weather-card__temperature">{{ temperature }}</span>
       </div>
-      <div class="weather-card__info-container">
-        <div class="weather-card__item-container">
-          <img src="../icons/hpa.svg" class="weather-card__icon" />
-          <span class="weather-card__hpa-info">{{ hPa }}</span>
+      <div class="weather-card__desc">{{ description }}</div>
+      <div class="weather-card__additional">
+        <div class="weather-card__info-container">
+          <div class="weather-card__item-container">
+            <img :src="windDirectionIconUrl" class="weather-card__icon" />
+            <span class="weather-card__wind-info">{{ windInfo }}</span>
+          </div>
+          <div class="weather-card__info-item">Humidity: {{ weather?.humidity }}%</div>
+          <div class="weather-card__info-item">Visibility: {{ visibility }}</div>
         </div>
-        <div class="weather-card__info-item">Dew point: {{ weather?.dewPoint }}°C</div>
+        <div class="weather-card__info-container">
+          <div class="weather-card__item-container">
+            <img src="../icons/hpa.svg" class="weather-card__icon" />
+            <span class="weather-card__hpa-info">{{ hPa }}</span>
+          </div>
+          <div class="weather-card__info-item">Dew point: {{ weather?.dewPoint }}°C</div>
+        </div>
       </div>
     </div>
   </div>
@@ -28,7 +31,7 @@
 
 <script setup lang="ts">
 import type { ClientWeatherData } from '@/types/clientNamespace'
-import { getWeather } from '../../api/requests.ts'
+import { getWeather } from '../../api/requests'
 import { computed, onMounted, ref, type PropType } from 'vue'
 import {
   capitalizeFirstLetter,
@@ -44,6 +47,7 @@ import WindSouthIcon from '../icons/Wind/Wind-S.png'
 import WindSouthEastIcon from '../icons/Wind/Wind-SE.png'
 import WindSouthWestIcon from '../icons/Wind/Wind-SW.png'
 import WindEastIcon from '../icons/Wind/Wind-E.png'
+import { Spin } from 'ant-design-vue'
 
 // Props
 const props = defineProps({
@@ -52,12 +56,15 @@ const props = defineProps({
     required: true,
   },
 })
+const isLoading = ref(false)
 
 // Weather data
 const weather = ref<ClientWeatherData | undefined>(undefined)
 onMounted(async () => {
+  isLoading.value = true
   await getWeather(props.city.lat, props.city.lon).then((data) => (weather.value = data))
   console.log(weather.value)
+  isLoading.value = false
 })
 
 // Computed properties
@@ -117,6 +124,8 @@ const windDirectionIconUrl = computed(() => {
   flex-wrap: nowrap;
   background-color: #fff;
   color: #000;
+  min-height: 308px;
+  justify-content: center;
 
   &__city {
     font: $title-16;
